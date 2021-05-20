@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        tools:layout="@layout/fragment_main"
+        android:name="com.cloudlevi.cloudnote.ui.main.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_deleteConfirmationDialog"
+            app:destination="@id/deleteConfirmationDialog" />
+    </fragment>
+    <fragment
+        android:id="@+id/addItemFragment"
+        tools:layout="@layout/fragment_add_item"
+        android:name="com.cloudlevi.cloudnote.ui.addNote.AddItemFragment"
+        android:label="AddItemFragment" >
+        <action
+            android:id="@+id/action_addItemFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/deleteConfirmationDialog"
+        tools:layout="@layout/dialog_delete_confirmation"
+        android:name="com.cloudlevi.cloudnote.ui.main.DeleteConfirmationDialog"
+        android:label="DeleteConfirmationDialog" >
+        <argument
+            android:name="note"
+            app:argType="com.cloudlevi.cloudnote.data.Note"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="folder"
+            app:argType="com.cloudlevi.cloudnote.data.Folder"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </dialog>
+</navigation>
