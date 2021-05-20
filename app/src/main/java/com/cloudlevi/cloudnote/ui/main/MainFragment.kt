@@ -7,7 +7,6 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,10 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cloudlevi.cloudnote.R
 import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
-import com.cloudlevi.cloudnote.databinding.ActivityMainBinding
 import com.cloudlevi.cloudnote.databinding.FragmentMainBinding
+import com.cloudlevi.cloudnote.extensions.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
@@ -26,11 +24,23 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private lateinit var binding: FragmentMainBinding
     private val viewModel: MainFragmentViewModel by viewModels()
     private val notesAdapter = NotesAdapter()
+    private lateinit var searchView: SearchView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentMainBinding.bind(view)
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Any>("deleteItem")?.observe(
+            viewLifecycleOwner) { result ->
+            Log.d(TAG, "DELETE: $result")
+            viewModel.onDeleteItem(result)
+        }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("position")?.observe(
+            viewLifecycleOwner) { result ->
+            notesAdapter.notifyItemChanged(result)
+        }
 
         binding.apply {
 
@@ -51,6 +61,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             viewModel.folders.observe(viewLifecycleOwner) {
 //                Log.d(TAG, "FOLDERS: $it")
                 viewModel.foldersChanged(it)
+            }
+
+            viewModel.queryNotesLiveData.observe(viewLifecycleOwner){
+                viewModel.queryResultChanged(it)
             }
 
             viewModel.folderNoteLiveData.observe(viewLifecycleOwner) {
@@ -77,6 +91,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                     val itemSwiped = notesAdapter.currentList[viewHolder.adapterPosition]
                     val action = MainFragmentDirections.actionMainFragmentToDeleteConfirmationDialog()
+                    action.position = viewHolder.adapterPosition
 
                     when (itemSwiped) {
                         is Note -> {
@@ -88,7 +103,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                             findNavController().navigate(action)
                         }
                     }
-                    viewModel.onItemSwiped(itemSwiped)
                 }
             }).attachToRecyclerView(mainNotesRecyclerView)
         }
@@ -98,6 +112,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main_fragment, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        searchView = searchItem.actionView as SearchView
+
+        searchView.onQueryTextChanged {
+            viewModel.searchQuery.value = it
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -110,3 +131,5 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 }
+
+

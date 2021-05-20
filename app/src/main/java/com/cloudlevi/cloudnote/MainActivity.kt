@@ -39,5 +39,5 @@ class MainActivity : AppCompatActivity() {
 const val VIEW_TYPE_NOTE = 0
 const val VIEW_TYPE_FOLDER = 1
 
-const val ITEM_ADD_TYPE_NOTE = 0
-const val ITEM_ADD_TYPE_FOLDER = 1
+const val ITEM_TYPE_NOTE = 0
+const val ITEM_TYPE_FOLDER = 1

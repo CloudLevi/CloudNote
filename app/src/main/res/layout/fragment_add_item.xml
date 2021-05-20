@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:hint="Please type in the title..."
+        android:hint="@string/please_type_in_the_title"
         android:maxLines="1"
         app:layout_constraintTop_toBottomOf="@id/choiceNoteButton" />
 
@@ -43,11 +43,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Please type in the description..."
+        android:hint="@string/please_type_in_the_description"
         android:inputType="textMultiLine"
         android:maxLines="5"
         android:minLines="3"
         app:layout_constraintTop_toBottomOf="@id/titleEditText" />
+
+    <TextView
+        android:id="@+id/folderChoiceTV"
+        android:text="@string/please_choose_a_folder"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/descriptionEditText" />
+
+    <Spinner
+        android:id="@+id/spinnerFolders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/folderChoiceTV" />
 
     <Button
         android:id="@+id/addButton"
@@ -57,7 +80,7 @@
         android:text="@string/add_note"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/descriptionEditText" />
+        app:layout_constraintTop_toBottomOf="@id/spinnerFolders" />
 
     <ProgressBar
         android:id="@+id/progressBar"

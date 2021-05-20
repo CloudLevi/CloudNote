@@ -7,4 +7,7 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="add_note">Add Note</string>
+    <string name="please_type_in_the_title">Please type in the title...</string>
+    <string name="please_type_in_the_description">Please type in the description...</string>
+    <string name="please_choose_a_folder">Please choose a folder:</string>
 </resources>

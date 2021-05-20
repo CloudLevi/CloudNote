@@ -1,9 +1,9 @@
 package com.cloudlevi.cloudnote.ui.addNote
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -11,12 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.cloudlevi.cloudnote.ITEM_ADD_TYPE_FOLDER
-import com.cloudlevi.cloudnote.ITEM_ADD_TYPE_NOTE
+import com.cloudlevi.cloudnote.ITEM_TYPE_FOLDER
+import com.cloudlevi.cloudnote.ITEM_TYPE_NOTE
 import com.cloudlevi.cloudnote.R
 import com.cloudlevi.cloudnote.ui.addNote.AddItemEvent.*
 import com.cloudlevi.cloudnote.databinding.FragmentAddItemBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_add_item.*
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
@@ -24,6 +25,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
 
     private lateinit var binding: FragmentAddItemBinding
     private val viewModel: AddItemViewModel by viewModels()
+    private lateinit var spinnerAdapter: ArrayAdapter<String>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,11 +34,11 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
 
         binding.apply {
             choiceNoteButton.setOnClickListener {
-                viewModel.choiceClicked(ITEM_ADD_TYPE_NOTE)
+                viewModel.choiceClicked(ITEM_TYPE_NOTE)
             }
 
             choiceFolderButton.setOnClickListener {
-                viewModel.choiceClicked(ITEM_ADD_TYPE_FOLDER)
+                viewModel.choiceClicked(ITEM_TYPE_FOLDER)
             }
 
             titleEditText.addTextChangedListener {
@@ -50,6 +52,24 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
             addButton.setOnClickListener {
                 viewModel.onAddButtonClicked()
             }
+        }
+
+        viewModel.foldersLiveData.observe(viewLifecycleOwner){
+            spinnerAdapter = ArrayAdapter<String>(requireContext(),
+                R.layout.support_simple_spinner_dropdown_item,
+                viewModel.getFolderTitles(it))
+
+            spinnerFolders.adapter = spinnerAdapter
+        }
+
+        spinnerFolders.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                viewModel.chosenFolder = position
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -77,7 +97,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
             var stringAddButton = ""
 
             when (newChoice) {
-                ITEM_ADD_TYPE_NOTE -> {
+                ITEM_TYPE_NOTE -> {
                     choiceNoteButton.setBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
@@ -91,9 +111,11 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
                         )
                     )
                     descriptionEditText.visibility = View.VISIBLE
+                    folderChoiceTV.visibility = View.VISIBLE
+                    spinnerFolders.visibility = View.VISIBLE
                     stringAddButton = "Add Note"
                 }
-                ITEM_ADD_TYPE_FOLDER -> {
+                ITEM_TYPE_FOLDER -> {
                     choiceNoteButton.setBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
@@ -107,6 +129,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
                         )
                     )
                     descriptionEditText.visibility = View.GONE
+                    folderChoiceTV.visibility = View.GONE
+                    spinnerFolders.visibility = View.GONE
                     stringAddButton = "Add Folder"
                 }
             }

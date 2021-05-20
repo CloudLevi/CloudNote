@@ -3,12 +3,12 @@ package com.cloudlevi.cloudnote.ui.main
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.*
 import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.data.NoteDao
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 
 class MainFragmentViewModel @ViewModelInject constructor(
     private val noteDao: NoteDao
@@ -20,6 +20,14 @@ class MainFragmentViewModel @ViewModelInject constructor(
     var folders = foldersFlow.asLiveData()
 
     var notes = notesFlow.asLiveData()
+
+    var searchQuery = MutableLiveData<String>()
+
+    var queryNotesFlow = searchQuery.asFlow().flatMapLatest {
+        noteDao.getNotesByQuery(it)
+    }
+
+    var queryNotesLiveData = queryNotesFlow.asLiveData()
 
     var dataList = concatenateLists(folders.value, notes.value)
     set(value) {
@@ -37,8 +45,27 @@ class MainFragmentViewModel @ViewModelInject constructor(
         if (notes.value != null) dataList = concatenateLists(folderList, notes.value)
     }
 
-    fun onItemSwiped(item: Any){
-        //TODO
+    fun onDeleteItem(item: Any){
+        when(item){
+            is Note -> deleteNote(item)
+            is Folder -> deleteFolder(item)
+        }
+    }
+
+    fun queryResultChanged(list: List<Note>){
+        if (searchQuery.value == "") dataList = concatenateLists(folders.value, notes.value)
+        else dataList = list
+    }
+
+    private fun deleteNote(note: Note) = viewModelScope.launch {
+        noteDao.deleteNote(note)
+    }
+
+    private fun deleteFolder(folder: Folder){
+        viewModelScope.launch {
+            noteDao.deleteFolderContents(folder.id)
+            noteDao.deleteFolder(folder.id)
+        }
     }
 
     private fun concatenateLists(folderList: List<Folder>?, notesList: List<Note>?): List<Any?>{

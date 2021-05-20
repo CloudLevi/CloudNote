@@ -92,18 +92,9 @@ class NotesAdapter: ListAdapter<Any, RecyclerView.ViewHolder>(DiffCallBack()) {
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)){
-            is Note -> {
-                Log.d(TAG, "ASSIGNED NOTE: ${getItem(position)}")
-                VIEW_TYPE_NOTE
-            }
-            is Folder -> {
-                Log.d(TAG, "ASSIGNED FOLDER: ${getItem(position)}")
-                VIEW_TYPE_FOLDER
-            }
-            else -> {
-                Log.d(TAG, "ASSIGNED ELSE: ${getItem(position).javaClass} ${getItem(position)}")
-                VIEW_TYPE_NOTE
-            }
+            is Note -> VIEW_TYPE_NOTE
+            is Folder -> VIEW_TYPE_FOLDER
+            else -> VIEW_TYPE_NOTE
         }
     }
 }

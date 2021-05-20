@@ -5,9 +5,10 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.cloudlevi.cloudnote.ITEM_ADD_TYPE_FOLDER
-import com.cloudlevi.cloudnote.ITEM_ADD_TYPE_NOTE
+import com.cloudlevi.cloudnote.ITEM_TYPE_FOLDER
+import com.cloudlevi.cloudnote.ITEM_TYPE_NOTE
 import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.data.NoteDao
@@ -21,7 +22,9 @@ class AddItemViewModel @ViewModelInject constructor(
     @Assisted private val state: SavedStateHandle
 ):ViewModel() {
 
-    var currentItemTypeChoice: Int = ITEM_ADD_TYPE_NOTE
+    var currentItemTypeChoice: Int = ITEM_TYPE_NOTE
+
+    var chosenFolder = -1
 
     var titleText = state.get<String>("titleText") ?: ""
         set(value) {
@@ -35,6 +38,9 @@ class AddItemViewModel @ViewModelInject constructor(
             state.set("descriptionText", value)
         }
 
+    private val foldersFlow = noteDao.getAllFolders()
+
+    val foldersLiveData = foldersFlow.asLiveData()
 
     private val addItemEventChannel = Channel<AddItemEvent>()
     val addItemEvent = addItemEventChannel.receiveAsFlow()
@@ -47,15 +53,25 @@ class AddItemViewModel @ViewModelInject constructor(
         changeProgressStatus(View.VISIBLE)
 
         when(currentItemTypeChoice){
-            ITEM_ADD_TYPE_NOTE -> {
+            ITEM_TYPE_NOTE -> {
                 if (titleText.isEmpty() || descriptionText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
-                else insertNote(Note(title = titleText, description = descriptionText))
+                else insertNote(Note(title = titleText, description = descriptionText, folder = chosenFolder))
             }
-            ITEM_ADD_TYPE_FOLDER -> {
+            ITEM_TYPE_FOLDER -> {
                 if (titleText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
                 else insertFolder(Folder(title = titleText))
             }
         }
+    }
+
+    fun getFolderTitles(foldersList: List<Folder>): ArrayList<String>{
+        val arrayList = ArrayList<String>()
+        arrayList.add("None")
+
+        for (folder in foldersList){
+            arrayList.add(folder.title)
+        }
+        return arrayList
     }
 
     private fun insertNote(note: Note) = viewModelScope.launch {
