@@ -12,6 +12,7 @@
         android:theme="@style/Theme.CloudNote">
         <activity
             android:name=".MainActivity"
+            android:label=""
             android:theme="@style/Theme.CloudNote">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

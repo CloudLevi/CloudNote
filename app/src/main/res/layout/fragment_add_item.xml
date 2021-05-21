@@ -6,6 +6,7 @@
 
     <Button
         android:id="@+id/choiceNoteButton"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -19,6 +20,7 @@
     <Button
         android:id="@+id/choiceFolderButton"
         android:layout_width="wrap_content"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColorInactive"
         android:text="@string/folder"
@@ -51,6 +53,7 @@
 
     <TextView
         android:id="@+id/folderChoiceTV"
+        android:visibility="gone"
         android:text="@string/please_choose_a_folder"
         android:textSize="16sp"
         android:layout_marginTop="16dp"
@@ -63,6 +66,7 @@
 
     <Spinner
         android:id="@+id/spinnerFolders"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

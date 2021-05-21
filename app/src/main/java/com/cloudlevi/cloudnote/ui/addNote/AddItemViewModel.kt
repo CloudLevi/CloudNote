@@ -1,5 +1,7 @@
 package com.cloudlevi.cloudnote.ui.addNote
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.View
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
@@ -9,6 +11,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cloudlevi.cloudnote.ITEM_TYPE_FOLDER
 import com.cloudlevi.cloudnote.ITEM_TYPE_NOTE
+import com.cloudlevi.cloudnote.NAVIGATION_DESTINATION_FOLDER
+import com.cloudlevi.cloudnote.NAVIGATION_DESTINATION_MAIN
 import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.data.NoteDao
@@ -20,11 +24,17 @@ import com.cloudlevi.cloudnote.ui.addNote.AddItemEvent.*
 class AddItemViewModel @ViewModelInject constructor(
     private val noteDao: NoteDao,
     @Assisted private val state: SavedStateHandle
-):ViewModel() {
+) : ViewModel() {
+
+    var addFolderFeature = false
+    var receivedFolderID = 0
+    lateinit var receivedFolder: Folder
 
     var currentItemTypeChoice: Int = ITEM_TYPE_NOTE
 
     var chosenFolder = -1
+
+    val folderTitlesHashMap = HashMap<Int, Pair<Int, String>>()
 
     var titleText = state.get<String>("titleText") ?: ""
         set(value) {
@@ -45,41 +55,76 @@ class AddItemViewModel @ViewModelInject constructor(
     private val addItemEventChannel = Channel<AddItemEvent>()
     val addItemEvent = addItemEventChannel.receiveAsFlow()
 
-    fun choiceClicked(clickedItemTypeChoice: Int){
-        if (currentItemTypeChoice != clickedItemTypeChoice) switchItemTypeChoice(clickedItemTypeChoice)
+    fun choiceClicked(clickedItemTypeChoice: Int) {
+        if (currentItemTypeChoice != clickedItemTypeChoice) switchItemTypeChoice(
+            clickedItemTypeChoice
+        )
     }
 
-    fun onAddButtonClicked(){
+    fun onAddButtonClicked() {
         changeProgressStatus(View.VISIBLE)
 
-        when(currentItemTypeChoice){
-            ITEM_TYPE_NOTE -> {
-                if (titleText.isEmpty() || descriptionText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
-                else insertNote(Note(title = titleText, description = descriptionText, folder = chosenFolder))
+        if (addFolderFeature){
+            when (currentItemTypeChoice) {
+                ITEM_TYPE_NOTE -> {
+                    if (titleText.isEmpty() || descriptionText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
+                    else insertNoteAndNavigate(
+                        Note(
+                            title = titleText,
+                            description = descriptionText,
+                            folder = chosenFolder
+                        ),
+                        NAVIGATION_DESTINATION_MAIN
+                    )
+                }
+                ITEM_TYPE_FOLDER -> {
+                    if (titleText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
+                    else insertFolderAndNavigate(Folder(title = titleText))
+                }
             }
-            ITEM_TYPE_FOLDER -> {
-                if (titleText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
-                else insertFolder(Folder(title = titleText))
-            }
+        }
+        else if (titleText.isEmpty() || descriptionText.isEmpty()) sendToastMessage("Please fill in the empty fields!")
+        else {
+            insertNoteAndNavigate(
+                Note(
+                    title = titleText,
+                    description = descriptionText,
+                    folder = receivedFolderID
+                ),
+                NAVIGATION_DESTINATION_FOLDER
+            )
         }
     }
 
-    fun getFolderTitles(foldersList: List<Folder>): ArrayList<String>{
-        val arrayList = ArrayList<String>()
-        arrayList.add("None")
+    fun spinnerItemSelected(position: Int) {
+        chosenFolder = folderTitlesHashMap[position]?.first ?: -1
+        Log.d(TAG, "spinnerItemSelected: ${folderTitlesHashMap[position]?.first ?: -20}")
+    }
 
-        for (folder in foldersList){
+    fun getFolderTitles(foldersList: List<Folder>): ArrayList<String> {
+        val arrayList = ArrayList<String>()
+        folderTitlesHashMap.clear()
+        arrayList.add("None")
+        folderTitlesHashMap[0] = Pair(0, "None")
+
+        for ((index, folder) in foldersList.withIndex()) {
             arrayList.add(folder.title)
+            folderTitlesHashMap[index + 1] = Pair(folder.id, folder.title)
         }
+        Log.d(TAG, "getFolderTitles ARRAYLIST: $arrayList")
+        Log.d(TAG, "getFolderTitles HASHMAP: $folderTitlesHashMap")
         return arrayList
     }
 
-    private fun insertNote(note: Note) = viewModelScope.launch {
+    private fun insertNoteAndNavigate(note: Note, navDestination: Int) = viewModelScope.launch {
         noteDao.insertNote(note)
-        navigateToMainFragment()
+        when(navDestination){
+            NAVIGATION_DESTINATION_MAIN -> navigateToMainFragment()
+            NAVIGATION_DESTINATION_FOLDER -> navigateToFolderFragment()
+        }
     }
 
-    private fun insertFolder(folder: Folder) = viewModelScope.launch {
+    private fun insertFolderAndNavigate(folder: Folder) = viewModelScope.launch {
         noteDao.insertFolder(folder)
         navigateToMainFragment()
     }
@@ -102,11 +147,17 @@ class AddItemViewModel @ViewModelInject constructor(
         changeProgressStatus(View.GONE)
         addItemEventChannel.send(NavigateToMainFragment)
     }
+
+    private fun navigateToFolderFragment() = viewModelScope.launch {
+        changeProgressStatus(View.GONE)
+        addItemEventChannel.send(NavigateToFolderFragment)
+    }
 }
 
-sealed class AddItemEvent{
-    data class ChangeChoiceSelection(val choice: Int): AddItemEvent()
-    data class SendToastMessage(val message: String): AddItemEvent()
-    data class ChangeProgressStatus(val status: Int): AddItemEvent()
-    object NavigateToMainFragment: AddItemEvent()
+sealed class AddItemEvent {
+    data class ChangeChoiceSelection(val choice: Int) : AddItemEvent()
+    data class SendToastMessage(val message: String) : AddItemEvent()
+    data class ChangeProgressStatus(val status: Int) : AddItemEvent()
+    object NavigateToMainFragment : AddItemEvent()
+    object NavigateToFolderFragment : AddItemEvent()
 }

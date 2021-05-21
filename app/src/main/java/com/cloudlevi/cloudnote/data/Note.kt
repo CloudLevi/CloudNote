@@ -18,5 +18,4 @@ data class Note (
     val password: String = "",
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ): Parcelable{
-
 }

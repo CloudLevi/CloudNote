@@ -11,4 +11,5 @@
     <color name="tvcolor">#FF000000</color>
     <color name="buttonColorActive">#E633DD</color>
     <color name="buttonColorInactive">#808080</color>
+    <color name="colorGrayItem">#DDDDDD</color>
 </resources>

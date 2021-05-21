@@ -15,6 +15,12 @@ interface NoteDao {
     @Query("SELECT * FROM notes_table WHERE (title LIKE '%' || :query || '%' OR description LIKE '%' || :query || '%') ORDER BY date_modified DESC")
     fun getNotesByQuery(query: String): Flow<List<Note>>
 
+    @Query("SELECT * FROM notes_table WHERE (title LIKE '%' || :query || '%' OR description LIKE '%' || :query || '%') AND folder = :folderID ORDER BY date_modified DESC")
+    fun getFolderNotesByQuery(query: String, folderID: Int): Flow<List<Note>>
+
+    @Query("SELECT * FROM notes_table WHERE folder = :folderID ORDER BY date_modified DESC")
+    fun getFolderContents(folderID: Int): Flow<List<Note>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(note: Note)
 

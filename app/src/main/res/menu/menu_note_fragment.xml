@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/pin_note"
+        android:icon="@drawable/ic_pin_outline"
+        android:title="Pin"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/add_folder"
+        android:icon="@drawable/ic_folder"
+        android:title="Add To Folder"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/password"
+        android:icon="@drawable/ic_lock_open"
+        android:title="Password"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/share"
+        android:title="Share"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/delete"
+        android:title="Delete"
+        app:showAsAction="never" />
+
+</menu>

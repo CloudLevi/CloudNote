@@ -7,43 +7,72 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        tools:layout="@layout/fragment_main"
         android:name="com.cloudlevi.cloudnote.ui.main.MainFragment"
-        android:label="MainFragment" >
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_addItemFragment"
             app:destination="@id/addItemFragment" />
         <action
             android:id="@+id/action_mainFragment_to_deleteConfirmationDialog"
             app:destination="@id/deleteConfirmationDialog" />
+        <action
+            android:id="@+id/action_mainFragment_to_folderViewFragment"
+            app:destination="@id/folderViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
-        tools:layout="@layout/fragment_add_item"
         android:name="com.cloudlevi.cloudnote.ui.addNote.AddItemFragment"
-        android:label="AddItemFragment" >
+        android:label="AddItemFragment"
+        tools:layout="@layout/fragment_add_item">
         <action
             android:id="@+id/action_addItemFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
-    </fragment>
-    <dialog
-        android:id="@+id/deleteConfirmationDialog"
-        tools:layout="@layout/dialog_delete_confirmation"
-        android:name="com.cloudlevi.cloudnote.ui.main.DeleteConfirmationDialog"
-        android:label="DeleteConfirmationDialog" >
+        <action
+            android:id="@+id/action_addItemFragment_to_folderViewFragment"
+            app:destination="@id/folderViewFragment" />
         <argument
-            android:name="note"
-            app:argType="com.cloudlevi.cloudnote.data.Note"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            android:name="addFolderFeature"
+            app:argType="boolean" />
         <argument
             android:name="folder"
             app:argType="com.cloudlevi.cloudnote.data.Folder"
             app:nullable="true"
             android:defaultValue="@null" />
+    </fragment>
+    <dialog
+        android:id="@+id/deleteConfirmationDialog"
+        android:name="com.cloudlevi.cloudnote.ui.main.DeleteConfirmationDialog"
+        android:label="DeleteConfirmationDialog"
+        tools:layout="@layout/dialog_delete_confirmation">
+        <argument
+            android:name="note"
+            android:defaultValue="@null"
+            app:argType="com.cloudlevi.cloudnote.data.Note"
+            app:nullable="true" />
+        <argument
+            android:name="folder"
+            android:defaultValue="@null"
+            app:argType="com.cloudlevi.cloudnote.data.Folder"
+            app:nullable="true" />
         <argument
             android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </dialog>
+    <fragment
+        android:id="@+id/folderViewFragment"
+        android:name="com.cloudlevi.cloudnote.ui.folderView.FolderViewFragment"
+        android:label="FolderViewFragment"
+        tools:layout="@layout/fragment_folder_view">
+        <argument
+            android:name="folder"
+            app:argType="com.cloudlevi.cloudnote.data.Folder" />
+        <action
+            android:id="@+id/action_folderViewFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_folderViewFragment_to_deleteConfirmationDialog"
+            app:destination="@id/deleteConfirmationDialog" />
+    </fragment>
 </navigation>

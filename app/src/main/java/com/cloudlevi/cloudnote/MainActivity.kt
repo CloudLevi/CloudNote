@@ -24,16 +24,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
     }
-
-    private fun setupViews(loggedIn: Boolean){
-
-        val navHostFragment =
-                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.findNavController()
-
-        setupActionBarWithNavController(navController)
-
-    }
 }
 
 const val VIEW_TYPE_NOTE = 0
@@ -41,3 +31,12 @@ const val VIEW_TYPE_FOLDER = 1
 
 const val ITEM_TYPE_NOTE = 0
 const val ITEM_TYPE_FOLDER = 1
+
+const val HOME_TYPE_LISTVIEW = 0
+const val HOME_TYPE_GRIDVIEW = 1
+
+const val FRAGMENT_TYPE_HOME = 0
+const val FRAGMENT_TYPE_FOLDER = 1
+
+const val NAVIGATION_DESTINATION_MAIN = 0
+const val NAVIGATION_DESTINATION_FOLDER = 1

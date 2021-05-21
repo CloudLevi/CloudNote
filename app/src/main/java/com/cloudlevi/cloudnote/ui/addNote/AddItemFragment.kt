@@ -1,6 +1,8 @@
 package com.cloudlevi.cloudnote.ui.addNote
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.cloudlevi.cloudnote.ITEM_TYPE_FOLDER
 import com.cloudlevi.cloudnote.ITEM_TYPE_NOTE
 import com.cloudlevi.cloudnote.R
+import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.ui.addNote.AddItemEvent.*
 import com.cloudlevi.cloudnote.databinding.FragmentAddItemBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,15 +33,30 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (arguments != null) {
+            viewModel.addFolderFeature = AddItemFragmentArgs.fromBundle(requireArguments()).addFolderFeature
+            viewModel.receivedFolderID = AddItemFragmentArgs.fromBundle(requireArguments()).folder?.id?: 0
+            if(viewModel.receivedFolderID != 0)
+                viewModel.receivedFolder = AddItemFragmentArgs.fromBundle(requireArguments()).folder!!
+        }
+
         binding = FragmentAddItemBinding.bind(view)
 
         binding.apply {
-            choiceNoteButton.setOnClickListener {
-                viewModel.choiceClicked(ITEM_TYPE_NOTE)
-            }
 
-            choiceFolderButton.setOnClickListener {
-                viewModel.choiceClicked(ITEM_TYPE_FOLDER)
+            if (viewModel.addFolderFeature){
+                choiceNoteButton.visibility = View.VISIBLE
+                choiceFolderButton.visibility = View.VISIBLE
+                folderChoiceTV.visibility = View.VISIBLE
+                spinnerFolders.visibility = View.VISIBLE
+
+                choiceNoteButton.setOnClickListener {
+                    viewModel.choiceClicked(ITEM_TYPE_NOTE)
+                }
+
+                choiceFolderButton.setOnClickListener {
+                    viewModel.choiceClicked(ITEM_TYPE_FOLDER)
+                }
             }
 
             titleEditText.addTextChangedListener {
@@ -64,7 +82,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
 
         spinnerFolders.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                viewModel.chosenFolder = position
+                viewModel.spinnerItemSelected(position)
+                Log.d(TAG, "Selection $position")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -80,6 +99,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
                     is SendToastMessage -> sendToastMessage(event.message)
                     is NavigateToMainFragment -> findNavController()
                         .navigate(AddItemFragmentDirections.actionAddItemFragmentToMainFragment())
+                    is NavigateToFolderFragment -> findNavController()
+                        .navigate(AddItemFragmentDirections.actionAddItemFragmentToFolderViewFragment(viewModel.receivedFolder))
                 }
             }
         }
