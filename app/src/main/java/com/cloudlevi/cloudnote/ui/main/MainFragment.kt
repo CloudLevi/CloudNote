@@ -6,12 +6,10 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.*
-import com.cloudlevi.cloudnote.FRAGMENT_TYPE_HOME
 import com.cloudlevi.cloudnote.HOME_TYPE_GRIDVIEW
 import com.cloudlevi.cloudnote.HOME_TYPE_LISTVIEW
 import com.cloudlevi.cloudnote.R
@@ -41,21 +39,25 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
         binding = FragmentMainBinding.bind(view)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Any>("deleteItem")
-            ?.observe(
-                viewLifecycleOwner
-            ) { result ->
+            ?.observe(viewLifecycleOwner) { result ->
                 Log.d(TAG, "DELETE: $result")
                 viewModel.onDeleteItem(result)
             }
 
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Note>("note_pin")
+            ?.observe(viewLifecycleOwner) { result ->
+                viewModel.onPinnedNote(result)
+            }
+
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("position")
-            ?.observe(
-                viewLifecycleOwner
-            ) { result ->
+            ?.observe(viewLifecycleOwner) { result ->
                 notesAdapter.notifyItemChanged(result)
             }
 
+
         binding.apply {
+
+            activity?.registerForContextMenu(mainNotesRecyclerView)
 
             viewModel.notes.observe(viewLifecycleOwner) {
                 viewModel.notesChanged(it)
@@ -104,22 +106,30 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
                     val itemSwiped = notesAdapter.currentList[viewHolder.adapterPosition]
-                    val action =
-                        MainFragmentDirections.actionMainFragmentToDeleteConfirmationDialog()
-                    action.position = viewHolder.adapterPosition
 
-                    when (itemSwiped) {
-                        is Note -> {
-                            action.note = itemSwiped
-                            findNavController().navigate(action)
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        val action =
+                            MainFragmentDirections.actionMainFragmentToDeleteConfirmationDialog()
+                        action.position = viewHolder.adapterPosition
+
+                        when (itemSwiped) {
+                            is Note -> {
+                                action.note = itemSwiped
+                                findNavController().navigate(action)
+                            }
+                            is Folder -> {
+                                action.folder = itemSwiped
+                                findNavController().navigate(action)
+                            }
                         }
-                        is Folder -> {
-                            action.folder = itemSwiped
-                            findNavController().navigate(action)
-                        }
+                    } else if (itemSwiped is Note) {
+                        val action =
+                            MainFragmentDirections
+                                .actionMainFragmentToPinConfirmDialog(itemSwiped, viewHolder.adapterPosition)
+                        findNavController().navigate(action)
                     }
+                    else notesAdapter.notifyItemChanged(viewHolder.adapterPosition)
                 }
             }).attachToRecyclerView(mainNotesRecyclerView)
         }
@@ -163,7 +173,11 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_note -> {
-                findNavController().navigate(MainFragmentDirections.actionMainFragmentToAddItemFragment(true))
+                findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToAddItemFragment(
+                        true
+                    )
+                )
                 true
             }
             R.id.change_layout -> {
@@ -180,7 +194,8 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
     }
 
     override fun OnNoteClickListener(note: Note) {
-        Log.d(TAG, "OnNoteClickListener: Clicked $note")
+        val action = MainFragmentDirections.actionMainFragmentToNoteFragment(note)
+        findNavController().navigate(action)
     }
 }
 

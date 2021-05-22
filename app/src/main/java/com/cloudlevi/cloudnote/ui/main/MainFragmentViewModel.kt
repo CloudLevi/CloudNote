@@ -29,7 +29,8 @@ class MainFragmentViewModel @ViewModelInject constructor(
     }
 
     private val foldersFlow = noteDao.getAllFolders()
-    private val notesFlow = noteDao.getAllNotes()
+    //private val notesFlow = noteDao.getAllNotes()
+    private val notesFlow = noteDao.getAllNotesWithoutFolder()
     private var folderFlow = noteDao.getFolderContents(3)
 
     lateinit var homeViewPreferenceLiveData: MutableLiveData<Int>
@@ -87,6 +88,10 @@ class MainFragmentViewModel @ViewModelInject constructor(
                 }
             }
         }
+    }
+
+    fun onPinnedNote(note: Note) = viewModelScope.launch {
+        noteDao.updateNote(note)
     }
 
     private fun deleteNote(note: Note) = viewModelScope.launch {

@@ -19,6 +19,12 @@
         <action
             android:id="@+id/action_mainFragment_to_folderViewFragment"
             app:destination="@id/folderViewFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_noteFragment"
+            app:destination="@id/noteFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_pinConfirmDialog"
+            app:destination="@id/pinConfirmDialog" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
@@ -74,5 +80,62 @@
         <action
             android:id="@+id/action_folderViewFragment_to_deleteConfirmationDialog"
             app:destination="@id/deleteConfirmationDialog" />
+        <action
+            android:id="@+id/action_folderViewFragment_to_noteFragment"
+            app:destination="@id/noteFragment" />
+        <action
+            android:id="@+id/action_folderViewFragment_to_pinConfirmDialog"
+            app:destination="@id/pinConfirmDialog" />
     </fragment>
+    <fragment
+        android:id="@+id/noteFragment"
+        tools:layout="@layout/fragment_note"
+        android:name="com.cloudlevi.cloudnote.ui.note.NoteFragment"
+        android:label="NoteFragment" >
+        <argument
+            android:name="note"
+            app:argType="com.cloudlevi.cloudnote.data.Note" />
+        <action
+            android:id="@+id/action_noteFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_noteFragment_to_folderViewFragment"
+            app:destination="@id/folderViewFragment" />
+        <action
+            android:id="@+id/action_noteFragment_to_changeFolderDialog"
+            app:destination="@id/changeFolderDialog" />
+        <action
+            android:id="@+id/action_noteFragment_to_changePasswordDialog"
+            app:destination="@id/changePasswordDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/changeFolderDialog"
+        tools:layout="@layout/dialog_folder_change"
+        android:name="com.cloudlevi.cloudnote.ui.note.ChangeFolderDialog"
+        android:label="ChangeFolderDialog" >
+        <argument
+            android:name="note"
+            app:argType="com.cloudlevi.cloudnote.data.Note" />
+    </dialog>
+    <dialog
+        android:id="@+id/pinConfirmDialog"
+        tools:layout="@layout/dialog_confirm_pin"
+        android:name="com.cloudlevi.cloudnote.ui.main.PinConfirmDialog"
+        android:label="PinConfirmDialog" >
+        <argument
+            android:name="note"
+            app:argType="com.cloudlevi.cloudnote.data.Note" />
+        <argument
+            android:name="position"
+            app:argType="integer" />
+    </dialog>
+    <dialog
+        android:id="@+id/changePasswordDialog"
+        tools:layout="@layout/dialog_change_password"
+        android:name="com.cloudlevi.cloudnote.ui.note.ChangePasswordDialog"
+        android:label="ChangePasswordDialog" >
+        <argument
+            android:name="note"
+            app:argType="com.cloudlevi.cloudnote.data.Note" />
+    </dialog>
 </navigation>

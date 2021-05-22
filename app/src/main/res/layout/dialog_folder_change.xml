@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/rounded_bg"
+    android:backgroundTint="#BC8EFD"
+    android:layout_height="match_parent"
+    android:layout_margin="64dp"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/folderChoiceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="@color/black"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="3"
+        android:textAlignment="center"
+        android:text="@string/please_choose_a_folder"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"/>
+
+    <Spinner
+        android:id="@+id/folderChoiceSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/folderChoiceTV"/>
+
+    <Button
+        android:id="@+id/applyButton"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/apply"
+        android:layout_marginTop="32dp"
+        android:layout_below="@id/folderChoiceSpinner"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

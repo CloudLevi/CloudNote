@@ -130,6 +130,7 @@ class NotesAdapter(private val receivedViewType: Int, private val listener: Item
                     (binding as ListNoteItemListviewBinding).apply {
                         noteTitleTV.text = note.title
                         noteDateTV.text = convertTime(note.date_modified)
+                        if (note.pinned) pinnedImageView.visibility = View.VISIBLE
                         iconImageView.setImageResource(R.drawable.ic_note)
 
                         root.setOnClickListener {
@@ -144,6 +145,7 @@ class NotesAdapter(private val receivedViewType: Int, private val listener: Item
                         noteTitleTV.text = note.title
                         noteDateTV.text = convertTime(note.date_modified)
                         noteTitleTV.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_note, 0,0,0)
+                        if (note.pinned) pinnedImageView.visibility = View.VISIBLE
                         noteDescriptionTV.text = note.description
                         if (note.description == "") {
                             noteDescriptionTV.visibility = View.GONE

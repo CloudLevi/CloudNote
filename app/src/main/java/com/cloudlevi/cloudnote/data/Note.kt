@@ -10,12 +10,13 @@ import java.text.FieldPosition
 @Entity(tableName = "notes_table")
 @Parcelize
 data class Note (
-    val title: String,
-    val description: String = "",
-    val date_modified: Long = System.currentTimeMillis(),
-    val folder: Int = -1,
-    val background_color: String = "",
-    val password: String = "",
+    var title: String,
+    var description: String = "",
+    var date_modified: Long = System.currentTimeMillis(),
+    var folder: Int = -1,
+    var pinned: Boolean = false,
+    var background_color: String = "#FFFFFF",
+    var password: String = "",
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ): Parcelable{
 }

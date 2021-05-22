@@ -186,10 +186,11 @@ class FolderViewFragment: Fragment(R.layout.fragment_folder_view), ItemClickList
     }
 
     override fun OnFolderClickListener(folder: Folder) {
-        TODO("Not yet implemented")
+        //Impossible
     }
 
     override fun OnNoteClickListener(note: Note) {
-        TODO("Not yet implemented")
+        val action = FolderViewFragmentDirections.actionFolderViewFragmentToNoteFragment(note)
+        findNavController().navigate(action)
     }
 }

@@ -105,7 +105,7 @@ class AddItemViewModel @ViewModelInject constructor(
         val arrayList = ArrayList<String>()
         folderTitlesHashMap.clear()
         arrayList.add("None")
-        folderTitlesHashMap[0] = Pair(0, "None")
+        folderTitlesHashMap[0] = Pair(-1, "None")
 
         for ((index, folder) in foldersList.withIndex()) {
             arrayList.add(folder.title)

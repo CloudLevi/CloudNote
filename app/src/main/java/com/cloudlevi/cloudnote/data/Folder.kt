@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Folder(
     val title: String,
-    val date_modified: Long = System.currentTimeMillis(),
+    var date_modified: Long = System.currentTimeMillis(),
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ):Parcelable {
 }

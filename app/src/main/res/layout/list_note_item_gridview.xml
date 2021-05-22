@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,10 +13,11 @@
         android:id="@+id/noteTitleTV"
         android:textStyle="bold"
         android:drawablePadding="8dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
+        android:layout_toStartOf="@+id/pinnedImageView"
         android:textColor="@color/tvcolor"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,9 +25,18 @@
         tools:text="Test title Test titleTest titleTest titleTest titleTest titleTest titleTest titleTest titleTest title Test titleTest titleTest titleTest titleTest titleTest titleTest titleTest title"
         tools:drawableStartCompat="@drawable/ic_note_24" />
 
+    <ImageView
+        android:id="@+id/pinnedImageView"
+        android:visibility="gone"
+        android:src="@drawable/ic_pin_rotated"
+        android:layout_alignParentEnd="true"
+        android:layout_width="24dp"
+        android:layout_height="24dp"/>
+
     <TextView
         android:id="@+id/noteDescriptionTV"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/noteTitleTV"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
@@ -39,6 +49,8 @@
 
     <TextView
         android:id="@+id/noteDateTV"
+        android:layout_below="@id/noteDescriptionTV"
+        android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -48,4 +60,4 @@
         app:layout_constraintTop_toBottomOf="@id/noteDescriptionTV"
         tools:text="20.05.2021" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

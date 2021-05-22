@@ -11,4 +11,5 @@
     <string name="please_type_in_the_description">Please type in the description...</string>
     <string name="please_choose_a_folder">Please choose a folder:</string>
     <string name="title">Title...</string>
+    <string name="apply">Apply</string>
 </resources>

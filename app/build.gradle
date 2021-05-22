@@ -85,6 +85,12 @@ dependencies {
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0-alpha02"
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
+
+    //Color Picker
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
+
+    //SQLCipher
+    implementation "net.zetetic:android-database-sqlcipher:4.4.2"
 }
 
 kapt {

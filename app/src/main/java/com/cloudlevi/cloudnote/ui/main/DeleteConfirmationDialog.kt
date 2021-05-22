@@ -90,8 +90,6 @@ class DeleteConfirmationDialog: DialogFragment(R.layout.dialog_delete_confirmati
             }
             dismissCalled = true
         }
-
-
     }
 
     private fun getModifiedItem(): Any {

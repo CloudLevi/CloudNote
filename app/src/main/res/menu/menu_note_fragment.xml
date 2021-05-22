@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/add_folder"
-        android:icon="@drawable/ic_folder"
+        android:icon="@drawable/ic_folder_outline"
         android:title="Add To Folder"
         app:showAsAction="always|collapseActionView" />
 
@@ -18,6 +18,12 @@
         android:id="@+id/password"
         android:icon="@drawable/ic_lock_open"
         android:title="Password"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/bg_color"
+        android:icon="@drawable/ic_bg_color"
+        android:title="Background Color"
         app:showAsAction="always|collapseActionView" />
 
     <item
