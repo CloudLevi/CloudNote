@@ -8,9 +8,12 @@ import com.cloudlevi.cloudnote.data.DatastoreManager
 import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.data.NoteDao
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import com.cloudlevi.cloudnote.ui.folderView.FolderViewEvent.*
 
 class FolderViewViewModel @ViewModelInject constructor(
     private val noteDao: NoteDao,
@@ -23,6 +26,9 @@ class FolderViewViewModel @ViewModelInject constructor(
             homeViewPreferenceLiveData.value = datastoreManager.getHomeViewPreference()
         }
     }
+
+    private val folderViewEventChannel = Channel<FolderViewEvent>()
+    val folderViewEvent = folderViewEventChannel.receiveAsFlow()
 
     lateinit var homeViewPreferenceLiveData: MutableLiveData<Int>
 
@@ -59,6 +65,10 @@ class FolderViewViewModel @ViewModelInject constructor(
         noteDao.deleteNote(note)
     }
 
+    fun onPinnedNote(note: Note) = viewModelScope.launch {
+        noteDao.updateNote(note)
+    }
+
     fun homeViewChanged(){
         viewModelScope.launch {
             when(homeViewPreferenceLiveData.value){
@@ -73,4 +83,7 @@ class FolderViewViewModel @ViewModelInject constructor(
             }
         }
     }
+}
+
+sealed class FolderViewEvent {
 }

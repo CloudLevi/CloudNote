@@ -17,6 +17,7 @@ data class Note (
     var pinned: Boolean = false,
     var background_color: String = "#FFFFFF",
     var password: String = "",
+    var hideTitle: Boolean = false,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ): Parcelable{
 }

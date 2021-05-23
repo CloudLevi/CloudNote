@@ -1,10 +1,8 @@
-package com.cloudlevi.cloudnote.ui.main
+package com.cloudlevi.cloudnote.ui.dialogs
 
-import android.content.ContentValues.TAG
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
@@ -21,7 +19,7 @@ class PinConfirmDialog: DialogFragment(R.layout.dialog_confirm_pin) {
 
     private var position = -1
 
-    private var answerBool: Boolean = false
+    private var answerBool = false
 
     private var dismissCalled = false
 
@@ -47,9 +45,7 @@ class PinConfirmDialog: DialogFragment(R.layout.dialog_confirm_pin) {
             }
 
             yesTV.setOnClickListener {
-                Log.d(TAG, "YES click listener before, ${receivedNote.pinned}")
                 receivedNote.pinned = !receivedNote.pinned
-                Log.d(TAG, "YES click listener after, ${receivedNote.pinned}")
                 receivedNote.date_modified = System.currentTimeMillis()
 
                 answerBool = true

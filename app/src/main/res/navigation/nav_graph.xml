@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_mainFragment_to_pinConfirmDialog"
             app:destination="@id/pinConfirmDialog" />
+        <action
+            android:id="@+id/action_mainFragment_to_enterPasswordDialog"
+            app:destination="@id/enterPasswordDialog" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
@@ -33,10 +36,13 @@
         tools:layout="@layout/fragment_add_item">
         <action
             android:id="@+id/action_addItemFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_addItemFragment_to_folderViewFragment"
-            app:destination="@id/folderViewFragment" />
+            app:destination="@id/folderViewFragment"
+            app:popUpTo="@id/mainFragment" />
         <argument
             android:name="addFolderFeature"
             app:argType="boolean" />
@@ -48,7 +54,7 @@
     </fragment>
     <dialog
         android:id="@+id/deleteConfirmationDialog"
-        android:name="com.cloudlevi.cloudnote.ui.main.DeleteConfirmationDialog"
+        android:name="com.cloudlevi.cloudnote.ui.dialogs.DeleteConfirmationDialog"
         android:label="DeleteConfirmationDialog"
         tools:layout="@layout/dialog_delete_confirmation">
         <argument
@@ -86,6 +92,9 @@
         <action
             android:id="@+id/action_folderViewFragment_to_pinConfirmDialog"
             app:destination="@id/pinConfirmDialog" />
+        <action
+            android:id="@+id/action_folderViewFragment_to_enterPasswordDialog"
+            app:destination="@id/enterPasswordDialog" />
     </fragment>
     <fragment
         android:id="@+id/noteFragment"
@@ -97,10 +106,14 @@
             app:argType="com.cloudlevi.cloudnote.data.Note" />
         <action
             android:id="@+id/action_noteFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_noteFragment_to_folderViewFragment"
-            app:destination="@id/folderViewFragment" />
+            app:destination="@id/folderViewFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_noteFragment_to_changeFolderDialog"
             app:destination="@id/changeFolderDialog" />
@@ -120,7 +133,7 @@
     <dialog
         android:id="@+id/pinConfirmDialog"
         tools:layout="@layout/dialog_confirm_pin"
-        android:name="com.cloudlevi.cloudnote.ui.main.PinConfirmDialog"
+        android:name="com.cloudlevi.cloudnote.ui.dialogs.PinConfirmDialog"
         android:label="PinConfirmDialog" >
         <argument
             android:name="note"
@@ -137,5 +150,17 @@
         <argument
             android:name="note"
             app:argType="com.cloudlevi.cloudnote.data.Note" />
+    </dialog>
+    <dialog
+        android:id="@+id/enterPasswordDialog"
+        tools:layout="@layout/dialog_enter_password"
+        android:name="com.cloudlevi.cloudnote.ui.dialogs.EnterPasswordDialog"
+        android:label="EnterPasswordDialog" >
+        <argument
+            android:name="note"
+            app:argType="com.cloudlevi.cloudnote.data.Note" />
+        <action
+            android:id="@+id/action_enterPasswordDialog_to_noteFragment"
+            app:destination="@id/noteFragment" />
     </dialog>
 </navigation>

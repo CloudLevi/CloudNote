@@ -83,7 +83,6 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item) {
         spinnerFolders.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 viewModel.spinnerItemSelected(position)
-                Log.d(TAG, "Selection $position")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {

@@ -7,9 +7,20 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="add_note">Add Note</string>
-    <string name="please_type_in_the_title">Please type in the title...</string>
-    <string name="please_type_in_the_description">Please type in the description...</string>
+    <string name="please_type_in_the_title">Please type in the title…</string>
+    <string name="please_type_in_the_description">Please type in the description…</string>
     <string name="please_choose_a_folder">Please choose a folder:</string>
-    <string name="title">Title...</string>
+    <string name="title">Title…</string>
     <string name="apply">Apply</string>
+    <string name="password">Password…</string>
+    <string name="submit">Submit</string>
+    <string name="change_password">Change password</string>
+    <string name="your_new_password">Your new password…</string>
+    <string name="hide_title">Hide title</string>
+    <string name="delete">Delete</string>
+    <string name="enter_the_password">Enter the password:</string>
+    <string name="description">Description…</string>
+    <string name="item_type_image">Item Type Image</string>
+    <string name="pin_icon">Pin icon</string>
+    <string name="password_icon">Password Icon</string>
 </resources>

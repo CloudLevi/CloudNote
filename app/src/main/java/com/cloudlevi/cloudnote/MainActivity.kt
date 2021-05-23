@@ -13,8 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +21,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
+
+        title = ""
     }
 }
 
@@ -34,9 +34,6 @@ const val ITEM_TYPE_FOLDER = 1
 
 const val HOME_TYPE_LISTVIEW = 0
 const val HOME_TYPE_GRIDVIEW = 1
-
-const val FRAGMENT_TYPE_HOME = 0
-const val FRAGMENT_TYPE_FOLDER = 1
 
 const val NAVIGATION_DESTINATION_MAIN = 0
 const val NAVIGATION_DESTINATION_FOLDER = 1

@@ -17,6 +17,7 @@ import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.databinding.FragmentMainBinding
 import com.cloudlevi.cloudnote.extensions.onQueryTextChanged
+import com.cloudlevi.cloudnote.ui.dialogs.EnterPasswordDialogDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,7 +41,6 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Any>("deleteItem")
             ?.observe(viewLifecycleOwner) { result ->
-                Log.d(TAG, "DELETE: $result")
                 viewModel.onDeleteItem(result)
             }
 
@@ -86,7 +86,6 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
             }
 
             viewModel.folderNoteLiveData.observe(viewLifecycleOwner) {
-                Log.d(TAG, "onViewCreated: $it")
                 if (!it.contains(null)) {
                     notesAdapter.submitList(it)
                     notesAdapter.notifyDataSetChanged()
@@ -151,8 +150,6 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main_fragment, menu)
 
-        Log.d(TAG, "onCreateOptionsMenu")
-
         when (viewModel.homeViewPreferenceLiveData.value) {
             HOME_TYPE_LISTVIEW ->
                 menu.getItem(menu.size() - 1).icon =
@@ -194,8 +191,11 @@ class MainFragment : Fragment(R.layout.fragment_main), ItemClickListener {
     }
 
     override fun OnNoteClickListener(note: Note) {
-        val action = MainFragmentDirections.actionMainFragmentToNoteFragment(note)
-        findNavController().navigate(action)
+        if (note.password.isNotEmpty())
+            findNavController()
+                .navigate(MainFragmentDirections.actionMainFragmentToEnterPasswordDialog(note))
+        else findNavController()
+            .navigate(MainFragmentDirections.actionMainFragmentToNoteFragment(note))
     }
 }
 

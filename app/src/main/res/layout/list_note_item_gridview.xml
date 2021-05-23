@@ -31,6 +31,18 @@
         android:src="@drawable/ic_pin_rotated"
         android:layout_alignParentEnd="true"
         android:layout_width="24dp"
+        android:contentDescription="@string/pin_icon"
+        android:layout_height="24dp"/>
+
+    <ImageView
+        android:id="@+id/passwordIcon"
+        android:visibility="gone"
+        android:contentDescription="@string/password_icon"
+        android:src="@drawable/ic_password_lock"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/noteTitleTV"
+        android:layout_centerHorizontal="true"
+        android:layout_width="24dp"
         android:layout_height="24dp"/>
 
     <TextView

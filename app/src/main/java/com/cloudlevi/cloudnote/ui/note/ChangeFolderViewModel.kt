@@ -45,6 +45,5 @@ class ChangeFolderViewModel @ViewModelInject constructor(
 
     fun spinnerItemSelected(position: Int) {
         chosenFolder = folderTitlesHashMap[position]?.first ?: -1
-        Log.d(ContentValues.TAG, "spinnerItemSelected: ${folderTitlesHashMap[position]?.first ?: -20}")
     }
 }

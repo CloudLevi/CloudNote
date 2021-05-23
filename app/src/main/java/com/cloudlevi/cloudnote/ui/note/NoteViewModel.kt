@@ -67,6 +67,13 @@ class NoteViewModel @ViewModelInject constructor(
         noteDao.updateNote(note)
     }
 
+    fun onPauseCalled() = viewModelScope.launch {
+        noteDao.updateNote(currentNote)
+    }
+
+    fun createShareText(): String =
+        "Title: ${currentNote.title}\n${currentNote.description} "
+
     private fun sendToastMessage(message: String) = viewModelScope.launch {
         noteEventChannel.send(SendToastMessage(message))
     }

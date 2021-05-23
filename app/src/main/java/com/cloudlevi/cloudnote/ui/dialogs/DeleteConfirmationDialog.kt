@@ -1,10 +1,8 @@
-package com.cloudlevi.cloudnote.ui.main
+package com.cloudlevi.cloudnote.ui.dialogs
 
-import android.content.ContentValues.TAG
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController

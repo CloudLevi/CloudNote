@@ -1,6 +1,7 @@
 package com.cloudlevi.cloudnote.ui.note
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -60,6 +62,16 @@ class NoteFragment: Fragment(R.layout.fragment_note) {
             titleEditText.setText(viewModel.currentNote.title)
             descriptionEditText.setText(viewModel.currentNote.description)
             mainFrameLayout.background = ColorDrawable(Color.parseColor(viewModel.currentNote.background_color))
+
+            titleEditText.addTextChangedListener {
+                if (it != null) viewModel.currentNote.title = it.toString().trim()
+                else viewModel.currentNote.title = ""
+            }
+
+            descriptionEditText.addTextChangedListener {
+                if (it != null) viewModel.currentNote.description = it.toString().trim()
+                else viewModel.currentNote.description = ""
+            }
 
         }
 
@@ -121,6 +133,8 @@ class NoteFragment: Fragment(R.layout.fragment_note) {
                 true
             }
             R.id.share -> {
+                viewModel.onPauseCalled()
+                openShareIntent()
                 true
             }
             R.id.delete -> {
@@ -142,6 +156,16 @@ class NoteFragment: Fragment(R.layout.fragment_note) {
         }
     }
 
+    private fun openShareIntent(){
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, viewModel.createShareText())
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, "Share using:")
+        startActivity(shareIntent)
+    }
+
     private fun getDrawable(id: Int): Drawable?{
         return ContextCompat.getDrawable(requireContext(), id)
     }
@@ -156,7 +180,6 @@ class NoteFragment: Fragment(R.layout.fragment_note) {
 
                 override fun onOk(dialog: AmbilWarnaDialog?, color: Int) {
                     val hexString = "#${Integer.toHexString(color)}"
-                    Log.d(TAG, "onOk: COLOR: $hexString")
                     viewModel.updateBGColor(hexString)
                     activity?.invalidateOptionsMenu()
                     binding.mainFrameLayout.background =
@@ -166,6 +189,11 @@ class NoteFragment: Fragment(R.layout.fragment_note) {
             })
 
         colorPicker.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPauseCalled()
     }
 
 }

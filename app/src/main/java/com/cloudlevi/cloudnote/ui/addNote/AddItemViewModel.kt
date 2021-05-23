@@ -98,7 +98,6 @@ class AddItemViewModel @ViewModelInject constructor(
 
     fun spinnerItemSelected(position: Int) {
         chosenFolder = folderTitlesHashMap[position]?.first ?: -1
-        Log.d(TAG, "spinnerItemSelected: ${folderTitlesHashMap[position]?.first ?: -20}")
     }
 
     fun getFolderTitles(foldersList: List<Folder>): ArrayList<String> {
@@ -111,8 +110,6 @@ class AddItemViewModel @ViewModelInject constructor(
             arrayList.add(folder.title)
             folderTitlesHashMap[index + 1] = Pair(folder.id, folder.title)
         }
-        Log.d(TAG, "getFolderTitles ARRAYLIST: $arrayList")
-        Log.d(TAG, "getFolderTitles HASHMAP: $folderTitlesHashMap")
         return arrayList
     }
 

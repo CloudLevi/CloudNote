@@ -60,7 +60,6 @@ class ChangeFolderDialog : DialogFragment(R.layout.dialog_folder_change) {
             )
 
             binding.folderChoiceSpinner.adapter = spinnerAdapter
-            Log.d(TAG, "Set selection: ${viewModel.initialFolder}")
             binding.folderChoiceSpinner.setSelection(viewModel.initialFolder)
         }
 
@@ -72,7 +71,6 @@ class ChangeFolderDialog : DialogFragment(R.layout.dialog_folder_change) {
                 p3: Long
             ) {
                 viewModel.spinnerItemSelected(position)
-                Log.d(ContentValues.TAG, "Selection $position")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {

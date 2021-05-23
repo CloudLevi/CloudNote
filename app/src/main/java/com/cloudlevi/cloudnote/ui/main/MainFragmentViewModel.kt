@@ -4,8 +4,6 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.cloudlevi.cloudnote.FRAGMENT_TYPE_FOLDER
-import com.cloudlevi.cloudnote.FRAGMENT_TYPE_HOME
 import com.cloudlevi.cloudnote.HOME_TYPE_GRIDVIEW
 import com.cloudlevi.cloudnote.HOME_TYPE_LISTVIEW
 import com.cloudlevi.cloudnote.data.DatastoreManager
@@ -29,9 +27,7 @@ class MainFragmentViewModel @ViewModelInject constructor(
     }
 
     private val foldersFlow = noteDao.getAllFolders()
-    //private val notesFlow = noteDao.getAllNotes()
     private val notesFlow = noteDao.getAllNotesWithoutFolder()
-    private var folderFlow = noteDao.getFolderContents(3)
 
     lateinit var homeViewPreferenceLiveData: MutableLiveData<Int>
 
@@ -50,7 +46,6 @@ class MainFragmentViewModel @ViewModelInject constructor(
     var dataList = concatenateLists(folders.value, notes.value)
     set(value) {
         field = value
-        Log.d(TAG, "data list setter called")
         folderNoteLiveData.value = value
     }
     val folderNoteLiveData = MutableLiveData<List<Any?>>()

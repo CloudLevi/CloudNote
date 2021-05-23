@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +16,7 @@ import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.databinding.ListNoteItemListviewBinding
 import com.cloudlevi.cloudnote.databinding.ListNoteItemGridviewBinding
+import java.lang.ClassCastException
 import java.text.SimpleDateFormat
 
 class NotesAdapter(private val receivedViewType: Int, private val listener: ItemClickListener) :
@@ -90,7 +93,6 @@ class NotesAdapter(private val receivedViewType: Int, private val listener: Item
         fun bind(folder: Folder) {
             when (viewType) {
                 HOME_TYPE_LISTVIEW -> {
-                    Log.d(TAG, "CALLED BIND FOLDER LISTVIEW")
                     (binding as ListNoteItemListviewBinding).apply {
                         noteTitleTV.text = folder.title
                         iconImageView.setImageResource(R.drawable.ic_folder)
@@ -102,7 +104,6 @@ class NotesAdapter(private val receivedViewType: Int, private val listener: Item
                 }
 
                 HOME_TYPE_GRIDVIEW -> {
-                    Log.d(TAG, "CALLED BIND FOLDER GRIDVIEW")
                     (binding as ListNoteItemGridviewBinding).apply {
                         noteTitleTV.text = folder.title
                         noteTitleTV.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_folder, 0,0,0)
@@ -126,11 +127,34 @@ class NotesAdapter(private val receivedViewType: Int, private val listener: Item
         fun bind(note: Note) {
             when (viewType) {
                 HOME_TYPE_LISTVIEW -> {
-                    Log.d(TAG, "CALLED BIND NOTE LISTVIEW")
+
                     (binding as ListNoteItemListviewBinding).apply {
+
+                        if (note.pinned) pinnedImageView.visibility = View.VISIBLE
+                        else pinnedImageView.visibility = View.GONE
+
+                        iconImageView.visibility = View.VISIBLE
+
+                        if (note.password.isNotEmpty()){
+                            if (note.hideTitle) {
+                                iconImageView.visibility = View.GONE
+                                noteTitleTV.visibility = View.GONE
+
+                                passwordIcon.post {
+                                    val layoutParamsRelative = passwordIcon.layoutParams as RelativeLayout.LayoutParams
+                                    layoutParamsRelative.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+                                    layoutParamsRelative.marginStart = 0
+                                    passwordIcon.layoutParams = layoutParamsRelative
+                                    passwordIcon.visibility = View.VISIBLE
+                                }
+                                pinnedImageView.visibility = View.GONE
+                            } else passwordIcon.visibility = View.VISIBLE
+                            noteDateTV.visibility = View.GONE
+
+                        } else passwordIcon.visibility = View.GONE
+
                         noteTitleTV.text = note.title
                         noteDateTV.text = convertTime(note.date_modified)
-                        if (note.pinned) pinnedImageView.visibility = View.VISIBLE
                         iconImageView.setImageResource(R.drawable.ic_note)
 
                         root.setOnClickListener {
@@ -140,12 +164,30 @@ class NotesAdapter(private val receivedViewType: Int, private val listener: Item
                 }
 
                 HOME_TYPE_GRIDVIEW -> {
-                    Log.d(TAG, "CALLED BIND NOTE GRIDVIEW")
                     (binding as ListNoteItemGridviewBinding).apply {
+
+                        if (note.pinned) pinnedImageView.visibility = View.VISIBLE
+                        else pinnedImageView.visibility = View.GONE
+
+                        if (note.password.isNotEmpty()){
+                            if (note.hideTitle) {
+                                noteTitleTV.visibility = View.GONE
+                                pinnedImageView.visibility = View.GONE
+
+                                passwordIcon.post {
+                                    val layoutParams = passwordIcon.layoutParams as RelativeLayout.LayoutParams
+                                    layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+                                    passwordIcon.layoutParams = layoutParams
+                                    passwordIcon.visibility = View.VISIBLE
+                                }
+                            } else passwordIcon.visibility = View.VISIBLE
+                            noteDescriptionTV.visibility = View.GONE
+                            noteDateTV.visibility = View.GONE
+                        } else passwordIcon.visibility = View.GONE
+
                         noteTitleTV.text = note.title
                         noteDateTV.text = convertTime(note.date_modified)
                         noteTitleTV.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_note, 0,0,0)
-                        if (note.pinned) pinnedImageView.visibility = View.VISIBLE
                         noteDescriptionTV.text = note.description
                         if (note.description == "") {
                             noteDescriptionTV.visibility = View.GONE
@@ -186,7 +228,7 @@ class DiffCallBack : DiffUtil.ItemCallback<Any>() {
     }
 
     override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-        return if (oldItem is Folder && newItem is Folder) (oldItem as Folder) == (newItem)
+        return if (oldItem is Folder && newItem is Folder) (oldItem as Folder) == newItem
         else if (oldItem is Note && newItem is Note) (oldItem as Note) == newItem
         else false
     }

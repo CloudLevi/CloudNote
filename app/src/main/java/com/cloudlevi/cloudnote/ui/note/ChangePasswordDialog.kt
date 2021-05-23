@@ -1,11 +1,10 @@
 package com.cloudlevi.cloudnote.ui.note
 
-import android.content.ContentValues
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
@@ -13,8 +12,6 @@ import androidx.navigation.fragment.findNavController
 import com.cloudlevi.cloudnote.R
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.databinding.DialogChangePasswordBinding
-import com.cloudlevi.cloudnote.databinding.DialogConfirmPinBinding
-import com.cloudlevi.cloudnote.ui.main.PinConfirmDialogArgs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,6 +23,7 @@ class ChangePasswordDialog: DialogFragment(R.layout.dialog_change_password) {
     private var dismissCalled = false
 
     private var passwordString = ""
+    private var isCheckedTitle = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +34,15 @@ class ChangePasswordDialog: DialogFragment(R.layout.dialog_change_password) {
 
         binding.apply {
             if (arguments != null){
-                receivedNote = ChangeFolderDialogArgs.fromBundle(requireArguments()).note
+                receivedNote = ChangePasswordDialogArgs.fromBundle(requireArguments()).note
+            }
+
+            isCheckedTitle = receivedNote.hideTitle
+
+            hideTitleCheckBox.isChecked = isCheckedTitle
+
+            hideTitleCheckBox.setOnCheckedChangeListener { compoundButton, b ->
+                isCheckedTitle = b
             }
 
             if (receivedNote.password.isEmpty()) {
@@ -51,6 +57,7 @@ class ChangePasswordDialog: DialogFragment(R.layout.dialog_change_password) {
 
             deleteButton.setOnClickListener {
                 receivedNote.password = ""
+                receivedNote.hideTitle = false
                 dismiss()
             }
 
@@ -59,6 +66,7 @@ class ChangePasswordDialog: DialogFragment(R.layout.dialog_change_password) {
                     Toast.makeText(requireContext(), "Password should be at least 4 characters long.", Toast.LENGTH_LONG).show()
                 else {
                     receivedNote.password = passwordString
+                    receivedNote.hideTitle = isCheckedTitle
                     dismiss()
                 }
             }

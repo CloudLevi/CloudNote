@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.*
 import com.cloudlevi.cloudnote.HOME_TYPE_GRIDVIEW
@@ -17,10 +18,13 @@ import com.cloudlevi.cloudnote.data.Folder
 import com.cloudlevi.cloudnote.data.Note
 import com.cloudlevi.cloudnote.databinding.FragmentFolderViewBinding
 import com.cloudlevi.cloudnote.extensions.onQueryTextChanged
+import com.cloudlevi.cloudnote.ui.dialogs.EnterPasswordDialogDirections
 import com.cloudlevi.cloudnote.ui.main.ItemClickListener
 import com.cloudlevi.cloudnote.ui.main.MainFragmentDirections
+import com.cloudlevi.cloudnote.ui.folderView.FolderViewEvent.*
 import com.cloudlevi.cloudnote.ui.main.NotesAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class FolderViewFragment: Fragment(R.layout.fragment_folder_view), ItemClickListener {
@@ -46,6 +50,16 @@ class FolderViewFragment: Fragment(R.layout.fragment_folder_view), ItemClickList
             viewModel.homeViewPreferenceLiveData.value ?: HOME_TYPE_LISTVIEW,
             this@FolderViewFragment
         )
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Note>("note_pin")
+            ?.observe(viewLifecycleOwner) { result ->
+                viewModel.onPinnedNote(result)
+            }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("position")
+            ?.observe(viewLifecycleOwner) { result ->
+                notesAdapter.notifyItemChanged(result)
+            }
 
 
         if (arguments != null) {
@@ -112,26 +126,36 @@ class FolderViewFragment: Fragment(R.layout.fragment_folder_view), ItemClickList
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
-                    val itemSwiped = notesAdapter.currentList[viewHolder.adapterPosition]
-                    val action =
-                        FolderViewFragmentDirections.actionFolderViewFragmentToDeleteConfirmationDialog()
-                    action.position = viewHolder.adapterPosition
+                    val itemSwiped = notesAdapter.currentList[viewHolder.adapterPosition] as Note
 
-                    when (itemSwiped) {
-                        is Note -> {
-                            action.note = itemSwiped
-                            findNavController().navigate(action)
-                        }
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        val action =
+                            FolderViewFragmentDirections.actionFolderViewFragmentToDeleteConfirmationDialog()
+                        action.position = viewHolder.adapterPosition
+
+                        action.note = itemSwiped
+                        findNavController().navigate(action)
+
+                    } else {
+                        val action =
+                            FolderViewFragmentDirections
+                                .actionFolderViewFragmentToPinConfirmDialog(itemSwiped, viewHolder.adapterPosition)
+                        findNavController().navigate(action)
                     }
                 }
             }).attachToRecyclerView(folderViewRecyclerView)
         }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.folderViewEvent.collect { event ->
+                //Empty for now
+            }
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main_fragment, menu)
-
-        Log.d(TAG, "onCreateOptionsMenu")
 
         when (viewModel.homeViewPreferenceLiveData.value) {
             HOME_TYPE_LISTVIEW ->
@@ -190,7 +214,10 @@ class FolderViewFragment: Fragment(R.layout.fragment_folder_view), ItemClickList
     }
 
     override fun OnNoteClickListener(note: Note) {
-        val action = FolderViewFragmentDirections.actionFolderViewFragmentToNoteFragment(note)
-        findNavController().navigate(action)
+        if (note.password.isNotEmpty())
+            findNavController()
+                .navigate(FolderViewFragmentDirections.actionFolderViewFragmentToEnterPasswordDialog(note))
+        else findNavController()
+            .navigate(FolderViewFragmentDirections.actionFolderViewFragmentToNoteFragment(note))
     }
 }
